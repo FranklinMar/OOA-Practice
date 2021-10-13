@@ -1,12 +1,12 @@
 class Rectangle:
     def __init__(self, leng=1, wid=1):
-        if isinstance(float(leng), float) and isinstance(float(leng), float) and \
-                20 > float(leng) > 0 and 20 > float(wid) > 0:
-            self.length = float(leng)
-            self.width = float(wid)
-        else:
-            raise BaseException
-    
+        if not isinstance(leng, (int, float)) or not isinstance(wid, (int, float)):
+            raise TypeError()
+
+        if 20 > leng > 0 and 20 > wid > 0:
+            raise ValueError()
+        self.length, self.width = leng, wid
+
     def perimeter(self):
         return 2*(self.length + self.width)
 
@@ -21,12 +21,12 @@ def main():
     print(f"'reg' instance\nPerimeter : { reg.perimeter() }\nArea : { reg.area() }\n")
     try:
         reg = Rectangle("1", "h")
-    except BaseException:
-        =print("Error.Rectangle sides must be in length of 0 to 20!\n")
+    except TypeError as e:
+        print("Error.Rectangle sides must be in length of 0 to 20!\n")
     try:
         reg = Rectangle(0, -4)
-    except BaseException:
+    except ValueError as e:
         print("Error.Invalid types of data entered in class instance.\n")
-   
+
 
 main()
