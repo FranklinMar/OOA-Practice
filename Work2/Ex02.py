@@ -1,11 +1,18 @@
 import math
 
+
 class Rational:
+    """
+    Instance of Class contains data of fraction:
+    nominator and denominator. Constructor reduces a fraction to minimum.
+    Methods 'print' return string with data as decimal or fraction.
+    """
     def __init__(self, num=1, den=1):
         if not isinstance(num, int) or not isinstance(den, int):
             raise TypeError("Invalid type of data entered.")
         if den == 0:
             raise ValueError("Denominator cannot be zero.")
+            
         self.__numerator, self.__denominator = num, den
         if self.__denominator < 0:
             self.__numerator, self.__denominator = -self.__numerator, -self.__denominator
@@ -33,5 +40,4 @@ def main():
     except ValueError as e:
         print("Division on zero.\n")
 
-        
 main()
