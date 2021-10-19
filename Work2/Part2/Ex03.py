@@ -3,20 +3,31 @@ import operator
 
 
 class Student:
+    """
+    Instance of class contains data about the student:
+    full name, number of grade certificate, a list of grades and average grade.
+    """
     def __init__(self, name, surname, number, *args):
-        ind = True
+        ind = False
         for i in args:
             if not isinstance(i, int):
-                ind = False
-        if isinstance(name, str) and isinstance(surname, str) and isinstance(number, int) and ind:  # and not ind:
-            # and isinstance(grades, list) \
-            self.name, self.surname, self.number, self.grades = name, surname, number, args
-            self.average = statistics.mean(self.grades)
-            # self.counting()
-        else:
+                ind = True
+                break
+        if not (isinstance(name, str) and isinstance(surname, str) and isinstance(number, int)) or ind:
             raise TypeError("Invalid type of data was entered.")
+        self.name, self.surname, self.number, self.grades = name, surname, number, args
+        self.average = statistics.mean(self.grades)
+
 
 class Group:
+    """
+    Instance of Class contains a list 'group' of Student class instances, a list
+    of names and surnames. Method 'add_student' adds instance of Student class to the
+    end of 'group' list, but only if there is no one with the same name or surname.
+    This method also forbids adding more than 20 Student instances to the 'group'.
+    Method 'highest_average' sorts 'group' list by 'average' in decreasing order and
+    returns string with 5 or lower highest average grades.
+    """
     group = []
     surnames = []
     names = []
@@ -27,24 +38,19 @@ class Group:
         self.names.append(student.name)
 
     def add_student(self, student):
-        if isinstance(student, Student):
-            if len(self.group) <= 20 and student.surname not in self.surnames and student.name not in self.names:
-                self.group.append(student)
-                self.surnames.append(student.surname)
-                self.names.append(student.name)
-            elif len(self.group) > 20:
-                raise BufferError("Limit of students in a group reached(20).Abort creating instances.")
-            else:
-                raise BufferError("Aborted creation of instance with the same name or surname.")
-        else:
+        if not isinstance(student, Student):
             raise TypeError("Invalid type of data was entered.")
+        if len(self.group) == 20:
+            raise BufferError("Limit of students in a group reached(20).Abort creating instances.")
+        if student.surname in self.surnames or student.name in self.names:
+            raise BufferError("Aborted creation of instance with the same name or surname.")
+        self.group.append(student)
+        self.surnames.append(student.surname)
+        self.names.append(student.name)
 
     def highest_average(self):
-        func = operator.attrgetter("average")
-        self.group.sort(reverse=True, key=func)
-        string = ""
-        for i in range(min(5, len(self.group))):
-            string += f"{i + 1}. {self.group[i].average} "
+        self.group.sort(reverse=True, key=operator.attrgetter("average"))
+        string = "".join(f"{i + 1}. {self.group[i].average} " for i in range(min(5, len(self.group))))
         return string
 
 
