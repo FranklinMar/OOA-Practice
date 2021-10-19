@@ -1,4 +1,9 @@
 class Rectangle:
+    """
+    Instance of Class contains attributes that store information
+    about instance's dimensions (such as height and width).
+    Class contains methods to calculate rectangle's area and perimeter.
+    """
     def __init__(self, leng=1, wid=1):
         if not isinstance(leng, (int, float)) or not isinstance(wid, (int, float)):
             raise TypeError()
@@ -22,11 +27,11 @@ def main():
     try:
         reg = Rectangle("1", "h")
     except TypeError as e:
-        print("Error.Rectangle sides must be in length of 0 to 20!\n")
+        print(e)
     try:
         reg = Rectangle(0, -4)
     except ValueError as e:
-        print("Error.Invalid types of data entered in class instance.\n")
+        print(e)
 
 
 main()
