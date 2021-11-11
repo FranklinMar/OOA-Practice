@@ -1,0 +1,17 @@
+[
+    {
+        "_Pizza__name": "Peperoni",
+        "_Pizza__description": "Tomato sauce, mozzarella cheese, bacon, spicy cheese, corn, pepperoni sausage, chili pepper, tobasco sauce.",
+        "_Pizza__price": 25
+    },
+    {
+        "_Pizza__name": "Chili",
+        "_Pizza__description": "Tomato sauce, mozzarella cheese, boiled meat, bacon, tomatoes, chili pepper, oregano",
+        "_Pizza__price": 20
+    },
+    {
+        "_Pizza__name": "Amatriccano",
+        "_Pizza__description": "Amatriccano sauce, mozzarella cheese, bacon, mini salami, mushrooms, parmesan cheese, oregano",
+        "_Pizza__price": 40
+    }
+]
