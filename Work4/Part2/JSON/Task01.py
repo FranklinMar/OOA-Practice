@@ -100,7 +100,7 @@ class LocalCourse(ILocalCourse):
         """
         return f"Local course:\n\tName: {self.name}\n\tTeacher: {self.teacher}\n\t" \
                f"Lab address: {self.address}\n\tCourse topics: " + \
-               ("".join("\n" + i for i in self.program) if len(self.program) else 'None')
+               ("".join("\n- " + i for i in self.program) if len(self.program) else 'None')
 
     def assign_to(self, teacher):
         """
@@ -193,9 +193,9 @@ class OffsiteCourse(IOffsiteCourse):
         Information about instance in human-readable form
         :return: str: Information about Local Course
         """
-        return f"Local course:\n\tName: {self.name}\n\tTeacher: {self.teacher}\n\t" \
+        return f"Offsite course:\n\tName: {self.name}\n\tTeacher: {self.teacher}\n\t" \
                f"Town: {self.town}\n\tCourse topics: " + \
-               ("".join("\n" + i for i in self.program) if len(self.program) else 'None')
+               ("".join("\n- " + i for i in self.program) if len(self.program) else 'None')
 
     def assign_to(self, teacher):
         """
@@ -269,23 +269,19 @@ class CourseFactory(ICourseFactory):
     """
     list_teachers = []
     list_courses = []
-
-    courses = {
-        "Local": LocalCourse,
-        "Offsite": OffsiteCourse
-    }
+    courses = {'local': LocalCourse, 'offsite': OffsiteCourse}
 
     @classmethod
     def teacher_create(cls, name, *courses):
         return Teacher(name, *courses)
 
     @classmethod
-    def course_create(cls, name, teacher, location, course_type="Local", *program):
+    def course_create(cls, name, teacher, location, course_type="local", *program):
         if not isinstance(course_type, str):
             raise NotImplemented
         if course_type not in cls.courses.keys():
             raise ValueError(f"unsupported value(s) of {course_type}")
-        return cls.courses[course_type](name, teacher, location, *program)
+        return cls.courses[course_type.lower()](name, teacher, location, *program)
 
     @classmethod
     def course_teacher_load(cls, path_courses, path_teachers):
