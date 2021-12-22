@@ -275,7 +275,7 @@ class CourseFactory(ICourseFactory):
         return Teacher(name, *courses)
 
     @classmethod
-    def course_create(cls, name, teacher, location, course_type="Local", *program):
+    def course_create(cls, name, teacher, location, course_type="local", *program):
         if not isinstance(course_type, str):
             raise NotImplementedError
         if course_type.lower() not in cls.courses.keys():
