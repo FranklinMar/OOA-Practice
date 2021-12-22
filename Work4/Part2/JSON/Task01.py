@@ -2,8 +2,6 @@ from Abstracts import ITeacher, ILocalCourse, IOffsiteCourse, ICourse, ICourseFa
 from json import load
 from os import stat
 
-from json import dump
-
 
 class Teacher(ITeacher):
     """A class for representing Teachers
