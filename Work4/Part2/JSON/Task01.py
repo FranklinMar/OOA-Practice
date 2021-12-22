@@ -2,26 +2,45 @@ from Abstracts import ITeacher, ILocalCourse, IOffsiteCourse, ICourse, ICourseFa
 from json import load
 from os import stat
 
+from json import dump
+
 
 class Teacher(ITeacher):
+    """A class for representing Teachers
+
+    Implements ITeacher abstract class
+
+    Attributes
+    name: str
+        A string with the name of teacher
+    courses: list[str]
+        A list with names of courses assigned for teacher"""
     def __init__(self, name, *courses):
+        """
+        Create instance of teacher
+        :param name: A name of teacher
+        :param courses: A list of courses for this teacher (Default:None)
+        """
         self.name = name
         self.courses = list(*courses)
 
     def __str__(self):
+        """
+        Information about instance in human-readable form
+        :return: str: Information about teacher
+        """
         return f"Teacher: {self.name}\nCourses:" + \
                ("".join("\n- " + i for i in self.courses) if len(self.courses) else "-")
-        # return f"Teacher: {self.name}\nCourses:" + \
-        #        ("".join(("\n- Local" if isinstance(i, ILocalCourse) else "\n- Offsite") +
-        #                 " Course: " + i for i in self.courses) if len(self.courses) else "-")  # \n\tFull name
-        # " Course: " + i.name for i in self.courses
 
     def assign_to(self, course):
+        """
+        Assigns instance of teacher to a course
+        :param course: Instance of ICourse implementation to assign
+        :return: None
+        """
         if not isinstance(course, ICourse):
             raise TypeError(f'unsupported type(s) of {type(course).__name__}')
-        # self.courses.append(course)
         self.courses.append(course.name)
-        # course.teacher = self
         course.teacher = self
 
     @property
@@ -46,28 +65,54 @@ class Teacher(ITeacher):
             raise TypeError(f'unsupported type(s) for \'composition\' of {type(courses).__name__}')
         if len(courses) > 0 and not all(isinstance(i, ICourse) for i in courses):
             raise ValueError(f'unsupported value(s) of {type(courses).__name__}')
-        # self.__courses = courses
         self.__courses = [i.name for i in courses]
 
 
 class LocalCourse(ILocalCourse):
+    """A class for representing Local Courses
+
+    Implements ICourse abstract class
+
+    Attributes
+    name: str
+        A string with name of the course
+    teacher: str
+        A string with name of the teacher of the course
+    local_address: str
+        An address/No. of lab for course
+    program: list[str]
+        A list with names of topics of the course. Sequence of topics"""
     def __init__(self, name, teacher, local_address, *program):
+        """
+        Create instance of local course
+        :param name: Name of the course
+        :param teacher: Teacher assigned to course
+        :param local_address: An address of lab for course
+        :param program: A list of topics of the course
+        """
         self.name = name
         self.teacher = teacher
         self.address = local_address
         self.program = list(*program)
 
-    def __str__(self):  # self.teacher.name if self.teacher else 'None'
+    def __str__(self):
+        """
+        Information about instance in human-readable form
+        :return: str: Information about Local Course
+        """
         return f"Local course:\n\tName: {self.name}\n\tTeacher: {self.teacher}\n\t" \
                f"Lab address: {self.address}\n\tCourse topics: " + \
                ("".join("\n" + i for i in self.program) if len(self.program) else 'None')
 
     def assign_to(self, teacher):
+        """
+        Assign this course to a teacher
+        :param teacher: Instance of ITeacher implementation to assign
+        :return: None
+        """
         if not isinstance(teacher, ITeacher):
             raise TypeError(f'unsupported type(s) of {type(teacher).__name__}')
-        # teacher.courses.append(self)
         teacher.courses.append(self.name)
-        # self.teacher = teacher
         self.teacher = teacher
 
     @property
@@ -90,7 +135,6 @@ class LocalCourse(ILocalCourse):
     def teacher(self, teacher):
         if not isinstance(teacher, ITeacher) and teacher:
             raise TypeError(f'unsupported type(s) for \'teacher\' of {type(teacher).__name__}')
-        # self.__teacher = teacher
         self.__teacher = teacher.name if teacher else teacher
 
     @property
@@ -119,24 +163,50 @@ class LocalCourse(ILocalCourse):
 
 
 class OffsiteCourse(IOffsiteCourse):
+    """A class for representing Offsite Courses
+
+    Implements IOffsiteCourse abstract class
+
+    Attributes
+    name: str
+        A string with name of the course
+    teacher: str
+        A string with name of the teacher of the course
+    town: str
+        A town of domain for course
+    program: list[str]
+        A list with names of topics of the course. Sequence of topics"""
     def __init__(self, name, teacher, town, *program):
+        """
+        Create instance of offsite course
+        :param name: Name of the course
+        :param teacher: Teacher assigned to course
+        :param town: A town of domain for course
+        :param program: A list of topics of the course
+        """
         self.name = name
         self.teacher = teacher
         self.town = town
         self.program = list(*program)
         # pass
 
-    def __str__(self):  # self.teacher.name if self.teacher else 'None'
+    def __str__(self):
+        """
+        Information about instance in human-readable form
+        :return: str: Information about Local Course
+        """
         return f"Local course:\n\tName: {self.name}\n\tTeacher: {self.teacher}\n\t" \
                f"Town: {self.town}\n\tCourse topics: " + \
                ("".join("\n" + i for i in self.program) if len(self.program) else 'None')
 
     def assign_to(self, teacher):
+        """
+        :param teacher: Instance of ITeacher implementation to assign
+        :return: None
+        """
         if not isinstance(teacher, ITeacher):
             raise TypeError(f'unsupported type(s) of {type(teacher).__name__}')
-        # teacher.courses.append(self)
         teacher.courses.append(self.name)
-        # self.teacher = teacher
         self.teacher = teacher
 
     @property
@@ -159,7 +229,6 @@ class OffsiteCourse(IOffsiteCourse):
     def teacher(self, teacher):
         if not isinstance(teacher, ITeacher) and teacher:
             raise TypeError(f'unsupported type(s) for \'teacher\' of {type(teacher).__name__}')
-        # self.__teacher = teacher
         self.__teacher = teacher.name if teacher else teacher
 
     @property
@@ -188,11 +257,20 @@ class OffsiteCourse(IOffsiteCourse):
 
 
 class CourseFactory(ICourseFactory):
-    pathTeacher = "D:\\Програми\\PyCharm Community Edition 2021.2.1\\PROJECTS\\TestProject\\Work4\\Part2\\teachers.json"
-    pathCourses = "D:\\Програми\\PyCharm Community Edition 2021.2.1\\PROJECTS\\TestProject\\Work4\\Part2\\courses.json"
+    """CourseFactory class for creating courses and teachers
 
-    load_teachers = []
-    load_courses = []
+    Implements ICourseFactory
+
+    Class Attributes:
+    load_teachers : list[Teacher]
+        Queue of loaded teachers from external sources
+    load_courses : list[LocalCourse | Offsite]
+        Queue of loaded teachers from external sources
+    courses : dict{str : class}
+        Dictionary for type of course
+    """
+    list_teachers = []
+    list_courses = []
 
     courses = {
         "Local": LocalCourse,
@@ -213,25 +291,37 @@ class CourseFactory(ICourseFactory):
 
     @classmethod
     def course_teacher_load(cls, path_courses, path_teachers):
+        """
+        Method of serializing course and teacher instances from JSON files.
+        Loading instances to the queues.
+        :param path_courses: Path to the file with courses
+        :param path_teachers: Path to the file with teacher
+        :return: None
+        """
         if stat(path_courses).st_size <= 2 or stat(path_teachers).st_size <= 2:
             return None
         load_teachers = load(open(path_teachers, 'r'))
         load_courses = load(open(path_courses, 'r'))
-        list_teachers = [Teacher(*i.values()) for i in load_teachers]
-        list_courses = [LocalCourse(*i.values())
-                        if any("Local" in j for j in i.values()) else OffsiteCourse(*i.values())
-                        for i in load_courses]
+        list_teachers = [Teacher(*i) for i in load_teachers]  # [Teacher(*i.values()) for i in load_teachers]
+        list_courses = [LocalCourse(*i) if any((("Local" in j) if j else False) for j in i) else OffsiteCourse(*i) for i
+                        in load_courses]
 
-        # list_local = [i if "Local" in i else None for i in list_courses]
-        # list_offsite = [i if "Offsite" in i else None for i in list_courses]
+        cls.list_teachers.extend(list_teachers)
+        cls.list_courses.extend(list_courses)
 
-        if not len(list_teachers) and not len(list_courses):
-            return None
-            # raise MemoryError()
-        average = None
-        for i in [j if j.teacher else None for j in list_courses]:
-            average = sum(len(j.courses) for j in list_teachers) / len(list_teachers)
-            iterator = iter(list_teachers)
+    @classmethod
+    def course_form(cls):
+        """
+        Method of forming courses, using loaded instances, by assigning teachers to courses without a teacher
+        :return: bool - if any Teacher was assigned to a Course
+        """
+        list_iteration = [j if not (j.teacher if j else None) else None for j in cls.list_courses]
+        if not len(list_iteration) or not len(cls.list_teachers):
+            return False
+        average = 0
+        for i in list_iteration:
+            average = sum(len(j.courses) for j in cls.list_teachers) / len(cls.list_teachers)
+            iterator = iter(cls.list_teachers)
             item = None
             while True:
                 try:
@@ -239,49 +329,46 @@ class CourseFactory(ICourseFactory):
                     if len(item.courses) < average:
                         break
                 except StopIteration:
-                    item = None
                     break
             if item:
-                i.teacher = item.name
-                item.courses.append(i.name)
+                i.assign_to(item)
             else:
-                i.teacher = list_teachers[0].name
-                list_teachers[0].courses.append(i.name)
+                i.assign_to(cls.list_teachers[0])
 
-        cls.load_teachers.extend(list_teachers)
-        cls.load_courses.extend(list_courses)
-        # for i in range(len(list_courses)):
-        #     item = list_courses[i]
-        #
-        #     i.assign_to()
+        return True
 
     @classmethod
-    def teacher_load(cls):
-        iterator = iter(cls.load_teachers)
+    def teacher_get(cls):
         while True:
             try:
-                yield next(iterator)
-            except StopIteration:
-                break
+                yield cls.list_teachers.pop(0)
+            except IndexError:
+                return
 
     @classmethod
-    def course_load(cls):
-        iterator = iter(cls.load_courses)
+    def course_get(cls):
         while True:
             try:
-                yield next(iterator)
-            except StopIteration:
-                break
+                yield cls.list_courses.pop(0)
+            except IndexError:
+                return
 
 
-test = Teacher("Nataliya")
-testCourse = LocalCourse("Python", None, "HQ Lab1")
-testoffsite = OffsiteCourse("Python", None, "HQ Lab1")
-print(test)
-print(testCourse)
-print(test.__dict__)
-print(testCourse.__dict__)
-print(testoffsite.__dict__)
-test.assign_to(testCourse)
-print(test)
-print(testCourse)
+if __name__ == "__main__":
+    test = Teacher("Nataliya")
+    testCourse = LocalCourse("Python", None, "HQ Lab1")
+    testoffsite = OffsiteCourse("Python", None, "HQ Lab1")
+    print(test)
+    print(testCourse)
+    print(test.__dict__)
+    print(testCourse.__dict__)
+    print(testoffsite.__dict__)
+    test.assign_to(testCourse)
+    print(test)
+    print(testCourse)
+    CourseFactory.course_teacher_load(
+        "D:\\Програми\\PyCharm Community Edition 2021.2.1\\PROJECTS\\TestProject\\Work4\\Part2\\courses.json",
+        "D:\\Програми\\PyCharm Community Edition 2021.2.1\\PROJECTS\\TestProject\\Work4\\Part2\\teachers.json")
+    CourseFactory.course_form()
+    print(next(CourseFactory.course_get()))
+    print(next(CourseFactory.teacher_get()))
