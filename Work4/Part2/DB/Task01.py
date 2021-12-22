@@ -300,8 +300,7 @@ class CourseFactory(ICourseFactory):
         for i in [j for j in table_courses]:
             topics = []
             if i[4]:
-                topics = cursor.execute(f'SELECT Topic FROM Topics WHERE id = {i[4]}')
-                topics = [j for j in topics]
+                topics.extend(j for j in cursor.execute(f'SELECT Topic FROM Topics WHERE id = {i[4]}'))
             if i[1]:
                 item_teacher = Teacher(*[j for j in
                                        cursor.execute(f'SELECT name FROM Teachers WHERE name = "{i[1]}"')][0])
@@ -314,7 +313,7 @@ class CourseFactory(ICourseFactory):
                 list_courses.append(item_course)
 
         table_teachers = cursor.execute('SELECT name FROM Teachers WHERE courses IS NULL')
-        cls.list_teachers.extend(Teacher(i) for i in table_teachers)
+        cls.list_teachers.extend(Teacher(*i) for i in table_teachers)
         cls.list_teachers.extend(list_teachers)
         cls.list_courses.extend(list_courses)
         connection.close()
